@@ -185,6 +185,7 @@ def getQuestionsByChapter(chapter: int, oneballquestion: int, twoballquestion: i
     while len(random_q) < oneballquestion + twoballquestion:
         for i in range(oneballquestion):
             random_q.append(random.choice(oneballQinChapter_q))
+
         if len(twoballQinChapter_q) > 0:
             for i in range(twoballquestion):
                 random_q.append(random.choice(twoballQinChapter_q))
@@ -205,7 +206,9 @@ def getQuestionList4Answers():
     return sorted(listOfQuestion, key=lambda x: random.random())
 
 
-# print(getQuestionList4Answers())
+print(getQuestionList4Answers())
+print(getQuestionList4Answers())
+print(getQuestionList4Answers())
 
 
 # Random Question

@@ -2,10 +2,11 @@ import csv
 import logging
 import random
 
+
 # Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
 
 
 # print(getQuestion('13.2.187'))
@@ -119,7 +120,7 @@ def voteQuestion(question_number: str, answer: str, total_score: int):
     else:
         res = False
         res_description = 'Неверно!' + ' Верный ответ: ' + getAnswer(question_number)
-        scor_ball=getScore(question_number, True)
+        scor_ball = getScore(question_number, True)
     return [res_description, scor_ball, total_score]
 
 
@@ -152,21 +153,27 @@ ScoreInTicket = 100
 QuestionInTicket = 83
 
 
-def getRandomQuestion():
-    random_q = random.choice(questions)
-    return random_q
 
 
-def getScoreFromQ(somearray):
-    return somearray[0].split('.')[1]
-
-
-def getChapterFromQ(somearray):
-    return somearray[0].split('.')[0]
+# def getRandomQuestion():
+#     random_q = random.choice(questions)
+#     return random_q
+#
+#
+# def getScoreFromQ(somearray):
+#     return somearray[0].split('.')[1]
+#
+#
+# def getChapterFromQ(somearray):
+#     return somearray[0].split('.')[0]
 
 
 # print(getRandomQuestion())
 # Вопросы по главе
+
+
+
+
 def getQuestionsByChapter(chapter: int, oneballquestion: int, twoballquestion: int):
     random_q = []
     allquestioninchapter_q = []
@@ -179,8 +186,10 @@ def getQuestionsByChapter(chapter: int, oneballquestion: int, twoballquestion: i
     for i in allquestioninchapter_q:
         if i[3][1] == '1':
             oneballQinChapter_q.append(i)
+
         if i[3][1] == '2':
             twoballQinChapter_q.append(i)
+    #print(f"Chapter {chapter}: 1b:{len(oneballQinChapter_q)}  2b:{len(twoballQinChapter_q)}")
 
     while len(random_q) < oneballquestion + twoballquestion:
         for i in range(oneballquestion):
@@ -189,7 +198,7 @@ def getQuestionsByChapter(chapter: int, oneballquestion: int, twoballquestion: i
         if len(twoballQinChapter_q) > 0:
             for i in range(twoballquestion):
                 random_q.append(random.choice(twoballQinChapter_q))
-
+    #print(random_q)
     return random_q
 
 
@@ -199,6 +208,7 @@ def getQuestionList4Answers():
     tmplistOfQuestion = []
     for i in questions4test:
         tmplistOfQuestion.append(getQuestionsByChapter(i['chapter'], i['1b'], i['2b']))
+    #print(len(tmplistOfQuestion))
     for i in tmplistOfQuestion:
         for j in i:
             listOfQuestion.append(j)
@@ -206,9 +216,8 @@ def getQuestionList4Answers():
     return sorted(listOfQuestion, key=lambda x: random.random())
 
 
-print(getQuestionList4Answers())
-print(getQuestionList4Answers())
-print(getQuestionList4Answers())
+#print(len(getQuestionList4Answers()))
+#print(len(getQuestionList4Answers()))
 
 
 # Random Question

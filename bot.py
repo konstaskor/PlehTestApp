@@ -8,7 +8,7 @@ import logging
 import utils
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
-import func
+# import func
 import os
 
 API_TOKEN = str(os.getenv('BOT_TOKEN'))
@@ -25,48 +25,29 @@ globe_session = utils.Sessions()
 bot = Bot(token=API_TOKEN)
 
 dp = Dispatcher(bot)
-#print(f"<Constructor {dp.__class__} > ")
+
+
+# print(f"<Constructor {dp.__class__} > ")
 
 
 @dp.message_handler(commands=['test'])
 async def start_cmd_handler(message: types.Message):
-
     # Sessions for save data in memory
-    global globe_session
-    #globe_session = utils.Sessions()
-    #print(len(globe_session))
-
+    # global globe_session
     userid = message.from_user.id
 
-    # global globe_session
-
-    # print(userid)
-    #print(globe_session)
     if globe_session.sessions.get(userid) is None:
         # добавляем юзера и генерим список вопросов
-        globe_session.addUser(userid)
+        globe_session.addUser(userid, globe_session.globe_dictionary.questions)
 
-
-
-   # print(globe_session.__dict__)
-    # print(globe_session.sessions[userid].questions)
-    #print(f"{len(globe_session.sessions[userid].questions)} - {userid} INIT len")
     keyboard_markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
 
-    await sleep(1)
+    await sleep(0.5)
     if len(globe_session.sessions[userid].questions) > 0:
 
         msg = globe_session.sessions[userid].questions.pop()
-     #   print(f"{len(globe_session.sessions[userid].questions)} - {userid} len")
-        # print(msg)
-
-        # print(globe_session.sessions[userid].keyboard_available_button.get(msg[0]))
-
         globe_session.sessions[userid].current_question += 1
-        # print(globe_session.sessions[userid].current_question)
-
         globe_session.sessions[userid].actual_question = msg[0]
-        # print(globe_session.sessions[userid].actual_question)
 
         keyboard_markup.row(
             *(types.KeyboardButton(text) for text in
@@ -86,7 +67,7 @@ async def start_cmd_handler(message: types.Message):
 @dp.message_handler()
 async def all_msg_handler(message: types.Message):
     userid = message.from_user.id
-    global globe_session
+    #global globe_session
 
     # logger.info('The answer is %r', button_text)  # print the text we've got
 
@@ -95,8 +76,12 @@ async def all_msg_handler(message: types.Message):
     else:
         await message.reply("Введите ответ.Это может быть только буква ABCDE в латинской раскладке",
                             reply_markup=types.ReplyKeyboardRemove())
+
+    #####################
+    #######################
+
         # сравнили ответ
-    if utils.checkAnswer(globe_session.sessions[userid].actual_question, message.text):
+    if globe_session.globe_dictionary.checkAnswer(globe_session.sessions[userid].actual_question, message.text):
         # обновим тотал
         globe_session.sessions[userid].total_score += utils.score(globe_session.sessions[userid].actual_question)
         # уменьшим оставш баллы
@@ -105,19 +90,19 @@ async def all_msg_handler(message: types.Message):
     else:
         # уменьшим оставш баллы
         globe_session.sessions[userid].rest_score -= utils.score(globe_session.sessions[userid].actual_question)
-        reply_text = f"Неверно! \n Верный ответ : {func.getAnswer(globe_session.sessions[userid].actual_question)} \n Итог: {globe_session.sessions[userid].total_score} \n Осталось вопросов:{len(globe_session.sessions[userid].questions)} \n Осталось баллов в вопросах:{globe_session.sessions[userid].rest_score}"
+        reply_text = f"Неверно! \n Верный ответ : {globe_session.globe_dictionary.getAnswer(globe_session.sessions[userid].actual_question)} \n Итог: {globe_session.sessions[userid].total_score} \n Осталось вопросов:{len(globe_session.sessions[userid].questions)} \n Осталось баллов в вопросах:{globe_session.sessions[userid].rest_score}"
 
     await message.reply(reply_text, reply_markup=types.ReplyKeyboardRemove())
     # with message, we send types.ReplyKeyboardRemove() to hide the keyboard
     if (globe_session.sessions[userid].rest_score + globe_session.sessions[userid].total_score) / 100 >= 0.8:
         await start_cmd_handler(message)
         if globe_session.sessions[userid].total_score > 80:
-            message_success = f"Поздравляю! Тест сдан \n Всего баллов в билете:100 \n Баллов набрано:{globe_session.sessions[userid].total_score} \n Баллов осталось:{globe_session.sessions[userid].rest_score} \n Ваши ответы: { globe_session.sessions[userid].votes } \n Начать заново: /test "
+            message_success = f"Поздравляю! Тест сдан \n Всего баллов в билете:100 \n Баллов набрано:{globe_session.sessions[userid].total_score} \n Баллов осталось:{globe_session.sessions[userid].rest_score} \n Начать заново: /test "
 
             await message.reply(message_success, reply_markup=types.ReplyKeyboardRemove())
             globe_session.sessions.pop(userid)
     else:
-        message_total = f"К сожалению, набрать вожделенные 80 баллов уже не получится:( Начинай сначала \n Всего баллов в билете:100 \n Баллов набрано:{globe_session.sessions[userid].total_score} \n Баллов осталось:{globe_session.sessions[userid].rest_score} \n Ваши ответы: { globe_session.sessions[userid].votes } \n Начать заново: /test "
+        message_total = f"К сожалению, набрать вожделенные 80 баллов уже не получится:( Начинай сначала \n Всего баллов в билете:100 \n Баллов набрано:{globe_session.sessions[userid].total_score} \n Баллов осталось:{globe_session.sessions[userid].rest_score} \n Начать заново: /test "
         await message.reply(message_total, reply_markup=types.ReplyKeyboardRemove())
         globe_session.sessions.pop(userid)
 

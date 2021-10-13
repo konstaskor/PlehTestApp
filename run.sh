@@ -1,5 +1,6 @@
 #!/bin/bash
-echo '1'
+echo 'change dir'
 cd /home/konsta/project/PlehTestApp/
-source ./venv/bin/activate
+. venv/bin/activate
+echo 'venv activated'
 python main.py

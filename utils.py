@@ -1,5 +1,11 @@
 import csv
+import logging
 import random
+
+logging.basicConfig(level=logging.INFO, filename='bot.log', filemode='w',
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # Проходной балл, 80%
 # 80
@@ -13,19 +19,19 @@ ScoreInTicket = 100
 QuestionInTicket = 83
 # кол-во и бальность вопросов
 questions4test = [
-    {'chapter': 1, '1b': 6, '2b': 2},
-    {'chapter': 2, '1b': 6, '2b': 2},
-    {'chapter': 3, '1b': 6, '2b': 2},
-    {'chapter': 4, '1b': 5, '2b': 2},
-    {'chapter': 5, '1b': 4, '2b': 0},
-    {'chapter': 6, '1b': 4, '2b': 0},
-    {'chapter': 7, '1b': 10, '2b': 0},
-    {'chapter': 8, '1b': 6, '2b': 2},
-    {'chapter': 9, '1b': 3, '2b': 1},
-    {'chapter': 10, '1b': 4, '2b': 3},
-    {'chapter': 11, '1b': 4, '2b': 0},
-    {'chapter': 12, '1b': 5, '2b': 1},
-    {'chapter': 13, '1b': 3, '2b': 2}]
+    {'chapter': 1, 'topic': 'Глава 1. Рынок ценных бумаг', '1b': 6, '2b': 2},
+    {'chapter': 2, 'topic': 'Глава 2. Участники рынка ценных бумаг. Инфраструктурные организации', '1b': 6, '2b': 2},
+    {'chapter': 3, 'topic': 'Глава 3. Эмиссия ценных бумаг. Обращение финансовых инструментов', '1b': 6, '2b': 2},
+    {'chapter': 4, 'topic': 'Глава 4. Институты коллективного инвестирования', '1b': 5, '2b': 2},
+    {'chapter': 5, 'topic': 'Глава 5. Государственные ценные бумаги. Государственный долг', '1b': 4, '2b': 0},
+    {'chapter': 6, 'topic': 'Глава 6. Гражданско-правовые основы ведения предпринимательской деятельности', '1b': 4, '2b': 0},
+    {'chapter': 7, 'topic': 'Глава 7. Корпоративное право', '1b': 10, '2b': 0},
+    {'chapter': 8, 'topic': 'Глава 8. Регулирование финансового рынка и надзор на финансовом рынке. Защита прав и законных интересов инвесторов на финансовом рынке', '1b': 6, '2b': 2},
+    {'chapter': 9, 'topic': 'Глава 9. Административные правонарушения и уголовные преступления на финансовом рынке', '1b': 3, '2b': 1},
+    {'chapter': 10, 'topic': 'Глава 10. Финансовая математика и статистика', '1b': 4, '2b': 3},
+    {'chapter': 11, 'topic': 'Глава 11. Основы бухгалтерского учета и финансовой отчетности на финансовом рынке', '1b': 4, '2b': 0},
+    {'chapter': 12, 'topic': 'Глава 12. Налогообложение на финансовом рынке', '1b': 5, '2b': 1},
+    {'chapter': 13, 'topic': 'Глава 13. Мировой финансовый рынок', '1b': 3, '2b': 2}]
 
 
 # кол-во баллов
@@ -62,7 +68,8 @@ class Dictionary:
     def __init__(self):
         self.parseAnswers()
         self.parseQuestions()
-        print(f"<Constructor {self.__class__} > ")
+        #self.topics=questions4test
+        logger.info(f"<Constructor {self.__class__} > ")
 
     # Получить верный ответ или нет
     def getAnswer(self, question_number: str):
@@ -102,7 +109,7 @@ class Questions:
         for i in self.questions:
             self.keyboard_available_button[i[0]] = ('A', 'B', 'C', 'D', 'E')[0:len(i[2])]
         self.qsum = len(self.questions)
-        print(f"<Constructor {self.__class__} > ")
+        logger.info(f"<Constructor {self.__class__} > ")
 
     # Сохранение голоса
     def vote(self, question_number: str, vote: str):
@@ -120,12 +127,12 @@ class Sessions:
         self.sessions = {}
         # Создаем словарь с вопросами и оветами
         self.globe_dictionary = Dictionary()
-        print(f"<Constructor {self.__class__} > ")
+        logger.info(f"<Constructor {self.__class__} > ")
         # print(self.globe_dictionary.questions)
 
     def addUser(self, userid, dic: list):
         self.sessions[userid] = Questions(dic)
-        print(f"<Add Questions to {userid} > ")
+        logger.info(f"<Add Questions to {userid} > ")
 
     def return_sessions(self):
         return self.sessions
